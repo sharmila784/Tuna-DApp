@@ -1,0 +1,225 @@
+<! DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tuna Fish Tracking</title>
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+<style>
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px; /* Adds spacing from edges */
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto; /* center horizontally */
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+}
+
+h1, h2 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+h1 {
+    font-size: 28px;
+}
+
+h2 {
+    font-size: 22px;
+    margin-top: 25px;
+}
+
+p {
+    margin-bottom: 20px;
+    color: #555;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: #ddd;
+    margin: 20px 0;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 8px 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.form-break {
+    margin: 30px 0;
+    border-top: 1px solid #eee;
+}
+
+#ftc-item li, #ftc-events li {
+    padding: 6px 10px;
+    background: #ecf0f1;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.btn-addFisherman, .btn-addRegulator, .btn-addRestaurant {
+    margin-right: 10px;
+}
+
+@media screen and (max-width: 600px) {
+    body {
+        padding: 10px; /* smaller padding for mobile */
+    }
+
+    .container {
+        padding: 15px;
+        margin: 0 auto;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+<div class="container">
+<h1 style="text-align: center;">Tuna Fish - Supply Chain</h1>
+<hr>
+<p style="text-align: center;">Track the journey of Tuna Fish using Ethereum blockchain .</p>
+</div>
+
+<div id="ftc-catch">
+<h2>Tuna Fish Query results</h2>
+<div>
+Fish ID (UPC)
+<br>
+<input type="number" id="fishID"name="fishID"><br>
+<button class="btn-query" id="button" type="button" data-id="5">Query</button>
+<br>
+<ul id="ftc-item">
+    <!-- Events will appear here from app.js --> 
+</ul>
+</div>
+
+<div class=form-break></div>
+<h2>Add Roles (Currently chosen MetaMask Account will be added to the role) </h2>
+<div class="form-group">
+<button class="btn-addFisherman" id="button" type="button" data-id="7">Add Fisherman</button>
+<button class="btn-addRegulator" id="button" type="button" data-id="8">Add Regulator</button>
+<button class="btn-addRestaurant" id="button" type="button" data-id="9">Add Restaurant</button>
+</div>
+
+<div class=form-break></div>
+<h2>Catch Tuna</h2>
+<div class="form-group">
+UPC
+<br>
+<input type="number" id="upc" name="upc" value=1><br>
+Origin Fisherman ID
+<br>
+<input type="text" id="originFishermanID" name="originFishermanID" value=""><br>
+Origin Coast Location
+<br>
+<input type="text" id="originCoastLocation" name="originCoastLocation" value="-38.239770 and 144.341490"><br>
+<br>
+<button class="btn-Catch" id="button" type="button" data-id="1">Catch</button>
+</div>
+
+<div class=form-break></div>
+<h2>Record Tuna</h2>
+<div class="form-group">
+UPC
+<br>
+<input type="number" id="upcRec" name="upcRec" ><br>
+Tuna Notes
+<br>
+<input type="text" id="tunaNotes" name="tunaNotes" value=""><br>
+Tuna Price
+<br>
+<input type="text" id="tunaPrice" name="tunaPrice" value=""><br>
+<button class="btn-Record" id="button" type="button" data-id="2">Record</button>
+</div>
+
+<div class=form-break></div>
+<h2>Audit Tuna</h2>
+<div class="form-group">
+UPC
+<br>
+<input type="number" id="upcAud" name="upcAud" ><br>
+Audit Status
+<br>
+<input type="text" id="auditStatus" name="auditStatus" value="" size="50"><br>
+<button class="btn-audit" id="button" type="button" data-id="4">Audit</button>
+
+<div class=form-break></div>
+<h2>Buy Tuna</h2>
+<div class="form-group">
+UPC
+<br>
+<input type="number" id="upcBuy" name="upcBuy" ><br>
+Price
+<br>
+<input type="text" id="tunaPrice_Buy" name="tunaPrice_Buy"
+value=""><br>
+<br>
+<button class="btn-buy" id="button" type="button" data-id="6">Buy</button>
+</div>
+<div class=form-break></div>
+<hr>
+</div>
+
+<h2>Transaction History<span id="ftc-history"></span></h2>
+<div>
+<ul id="ftc-events">
+<!-- Events will appear here from app.js -->
+</ul>
+<br>
+<hr>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
