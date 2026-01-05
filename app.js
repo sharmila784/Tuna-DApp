@@ -1,398 +1,129 @@
 App = {
   web3Provider: null,
   contracts: {},
-  metamaskAccountID: "0x0000000000000000000000000000000000000000",
+  metamaskAccountID: null,
 
+  // 🔁 UPDATE this when you redeploy
   contractAddress: "0xE84221AAbf11Cc869E77739b5AbdDfbaa23d452F",
 
-  // ✅ FIXED: ABI MUST NOT BE DOUBLE-NESTED
+  /* ---------------- ABI ---------------- */
   contractABI: [
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "addFisherman",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "addRegulator",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "addRestaurant",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_upc",
-				"type": "uint256"
-			},
-			{
-				"name": "_auditStatus",
-				"type": "string"
-			}
-		],
-		"name": "auditTuna",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_upc",
-				"type": "uint256"
-			},
-			{
-				"name": "_price",
-				"type": "uint256"
-			}
-		],
-		"name": "buyTuna",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_upc",
-				"type": "uint256"
-			},
-			{
-				"name": "_originFishermanID",
-				"type": "address"
-			},
-			{
-				"name": "_originCoastLocation",
-				"type": "string"
-			}
-		],
-		"name": "catchTuna",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_upc",
-				"type": "uint256"
-			},
-			{
-				"name": "price",
-				"type": "uint256"
-			},
-			{
-				"name": "tunaNotes",
-				"type": "string"
-			}
-		],
-		"name": "recordTuna",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "renounceFisherman",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "renounceRegulator",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "renounceRestaurant",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "upc",
-				"type": "uint256"
-			}
-		],
-		"name": "Caught",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "upc",
-				"type": "uint256"
-			}
-		],
-		"name": "Recorded",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "upc",
-				"type": "uint256"
-			}
-		],
-		"name": "Audited",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "upc",
-				"type": "uint256"
-			}
-		],
-		"name": "Bought",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "RestaurantAdded",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "RestaurantRemoved",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "RegulatorAdded",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "RegulatorRemoved",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "FishermanAdded",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "FishermanRemoved",
-		"type": "event"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "isFisherman",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "isRegulator",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "isRestaurant",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_upc",
-				"type": "uint256"
-			}
-		],
-		"name": "queryTuna",
-		"outputs": [
-			{
-				"name": "ownerID",
-				"type": "address"
-			},
-			{
-				"name": "originCoastLocation",
-				"type": "string"
-			},
-			{
-				"name": "tunaNotes",
-				"type": "string"
-			},
-			{
-				"name": "tunaPrice",
-				"type": "uint256"
-			},
-			{
-				"name": "tunaState",
-				"type": "uint8"
-			},
-			{
-				"name": "regulatorID",
-				"type": "address"
-			},
-			{
-				"name": "auditStatus",
-				"type": "string"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	}
+    {
+      "constant": false,
+      "inputs": [{ "name": "account", "type": "address" }],
+      "name": "addFisherman",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [{ "name": "account", "type": "address" }],
+      "name": "addRegulator",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [{ "name": "account", "type": "address" }],
+      "name": "addRestaurant",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        { "name": "_upc", "type": "uint256" },
+        { "name": "_originFishermanID", "type": "address" },
+        { "name": "_originCoastLocation", "type": "string" }
+      ],
+      "name": "catchTuna",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        { "name": "_upc", "type": "uint256" },
+        { "name": "price", "type": "uint256" },
+        { "name": "tunaNotes", "type": "string" }
+      ],
+      "name": "recordTuna",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        { "name": "_upc", "type": "uint256" },
+        { "name": "_auditStatus", "type": "string" }
+      ],
+      "name": "auditTuna",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        { "name": "_upc", "type": "uint256" },
+        { "name": "_price", "type": "uint256" }
+      ],
+      "name": "buyTuna",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [{ "name": "account", "type": "address" }],
+      "name": "isFisherman",
+      "outputs": [{ "type": "bool" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [{ "name": "account", "type": "address" }],
+      "name": "isRegulator",
+      "outputs": [{ "type": "bool" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [{ "name": "account", "type": "address" }],
+      "name": "isRestaurant",
+      "outputs": [{ "type": "bool" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [{ "name": "_upc", "type": "uint256" }],
+      "name": "queryTuna",
+      "outputs": [
+        { "type": "address" },
+        { "type": "string" },
+        { "type": "string" },
+        { "type": "uint256" },
+        { "type": "uint8" },
+        { "type": "address" },
+        { "type": "string" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
   ],
 
   /* ---------------- INIT ---------------- */
   init: async function () {
-    return await App.initWeb3();
-  },
-
-  /* ---------------- WEB3 ---------------- */
-  initWeb3: async function () {
     if (!window.ethereum) {
-      alert("Please install MetaMask");
+      alert("Install MetaMask");
       return;
     }
 
@@ -403,177 +134,130 @@ App = {
     const accounts = await web3.eth.getAccounts();
     App.metamaskAccountID = accounts[0];
 
-    console.log("Connected:", App.metamaskAccountID);
-
-    App.initContract();
-    App.bindEvents();
-    App.checkUserRole();
-  },
-
-  /* ---------------- CONTRACT ---------------- */
-  initContract: function () {
     App.contracts.Gateway = new web3.eth.Contract(
       App.contractABI,
       App.contractAddress
     );
-    console.log("Contract ready");
+
+    App.bindEvents();
+    App.checkUserRole();
+
+    // 🔁 Account switch support
+    window.ethereum.on("accountsChanged", function (accounts) {
+      App.metamaskAccountID = accounts[0];
+      App.checkUserRole();
+    });
   },
+
+  /* ---------------- ROLE LOGIC ---------------- */
   checkUserRole: async function () {
-  const account = App.metamaskAccountID;
+    const a = App.metamaskAccountID;
 
-  const isFisherman = await App.contracts.Gateway.methods
-    .isFisherman(account)
-    .call();
+    const isReg = await App.contracts.Gateway.methods.isRegulator(a).call();
+    const isFish = await App.contracts.Gateway.methods.isFisherman(a).call();
+    const isRest = await App.contracts.Gateway.methods.isRestaurant(a).call();
 
-  const isRegulator = await App.contracts.Gateway.methods
-    .isRegulator(account)
-    .call();
+    let role = "NOT ASSIGNED";
+    if (isReg) role = "REGULATOR";
+    else if (isFish) role = "FISHERMAN";
+    else if (isRest) role = "RESTAURANT";
 
-  const isRestaurant = await App.contracts.Gateway.methods
-    .isRestaurant(account)
-    .call();
-
-  console.log("Role status:", {
-    isFisherman,
-    isRegulator,
-    isRestaurant
-  });
-
-  App.updateUIBasedOnRole(isFisherman, isRegulator, isRestaurant);
+    $("#currentRole").text(role);
+    App.updateUI(role);
   },
 
-  updateUIBasedOnRole: function (isFisherman, isRegulator, isRestaurant) {
+  updateUI: function (role) {
+    $(".btn-Catch,.btn-Record,.btn-audit,.btn-buy").hide();
 
-  // Disable all role-based buttons initially
-  $(".btn-Catch, .btn-Record, .btn-audit, .btn-buy").prop("disabled", true);
-
-  if (isFisherman) {
-    $(".btn-Catch").prop("disabled", false);
-    $(".btn-Record").prop("disabled", false);
-    $("#currentRole").text("FISHERMAN");
-  }
-
-  if (isRegulator) {
-    $(".btn-audit").prop("disabled", false);
-    $("#currentRole").text("REGULATOR");
-  }
-
-  if (isRestaurant) {
-    $(".btn-buy").prop("disabled", false);
-    $("#currentRole").text("RESTAURANT");
-  }
-},
-
+    if (role === "FISHERMAN") {
+      $(".btn-Catch,.btn-Record").show();
+    }
+    if (role === "REGULATOR") {
+      $(".btn-audit").show();
+    }
+    if (role === "RESTAURANT") {
+      $(".btn-buy").show();
+    }
+  },
 
   /* ---------------- EVENTS ---------------- */
   bindEvents: function () {
     $(document).on("click", "button", App.handleButtonClick);
   },
 
-  handleButtonClick: function (event) {
-    event.preventDefault();
-    const processId = parseInt($(event.target).data("id"));
-
-    switch (processId) {
-      case 1: return App.catchTuna();
-      case 2: return App.recordTuna();
-      case 4: return App.auditTuna();
-      case 5: return App.queryTuna();
-      case 6: return App.buyTuna();
-      case 7: return App.addFisherman();
-      case 8: return App.addRegulator();
-      case 9: return App.addRestaurant();
-    }
+  handleButtonClick: function (e) {
+    const id = $(e.target).data("id");
+    if (id === 1) App.catchTuna();
+    if (id === 2) App.recordTuna();
+    if (id === 4) App.auditTuna();
+    if (id === 5) App.queryTuna();
+    if (id === 6) App.buyTuna();
+    if (id === 7) App.addFisherman();
+    if (id === 8) App.addRegulator();
+    if (id === 9) App.addRestaurant();
   },
 
-  /* ---------------- FUNCTIONS ---------------- */
-
+  /* ---------------- ACTIONS ---------------- */
   catchTuna: async function () {
-    const upc = $("#upc").val();
-    const location = $("#originCoastLocation").val();
-
     await App.contracts.Gateway.methods
-      .catchTuna(upc, App.metamaskAccountID, location)
+      .catchTuna($("#upc").val(), App.metamaskAccountID, $("#originCoastLocation").val())
       .send({ from: App.metamaskAccountID });
-
-    alert("Tuna caught");
   },
 
   recordTuna: async function () {
     await App.contracts.Gateway.methods
       .recordTuna($("#upcRec").val(), $("#tunaPrice").val(), $("#tunaNotes").val())
       .send({ from: App.metamaskAccountID });
-
-    alert("Tuna recorded");
   },
 
   auditTuna: async function () {
     await App.contracts.Gateway.methods
       .auditTuna($("#upcAud").val(), $("#auditStatus").val())
       .send({ from: App.metamaskAccountID });
-
-    alert("Tuna audited");
   },
 
   buyTuna: async function () {
     const price = $("#tunaPrice_Buy").val();
-
     await App.contracts.Gateway.methods
       .buyTuna($("#upcBuy").val(), price)
       .send({ from: App.metamaskAccountID, value: price });
-
-    alert("Tuna bought");
   },
 
   queryTuna: async function () {
-    const result = await App.contracts.Gateway.methods
+    const r = await App.contracts.Gateway.methods
       .queryTuna($("#fishID").val())
       .call();
 
     $("#ftc-item").html(`
-      <li><b>Owner:</b> ${result[0]}</li>
-      <li><b>Location:</b> ${result[1]}</li>
-      <li><b>Notes:</b> ${result[2]}</li>
-      <li><b>Price:</b> ${result[3]}</li>
-      <li><b>State:</b> ${result[4]}</li>
-      <li><b>Regulator:</b> ${result[5]}</li>
-      <li><b>Audit:</b> ${result[6]}</li>
+      Owner: ${r[0]} <br>
+      Location: ${r[1]} <br>
+      Notes: ${r[2]} <br>
+      Price: ${r[3]} <br>
+      State: ${r[4]} <br>
+      Regulator: ${r[5]} <br>
+      Audit: ${r[6]}
     `);
   },
 
   addFisherman: async function () {
-  const addr = $("#roleAddress").val();
-  await App.contracts.Gateway.methods
-    .addFisherman(addr)
-    .send({ from: App.metamaskAccountID });
-
-  alert("Fisherman role assigned to " + addr);
-},
+    await App.contracts.Gateway.methods
+      .addFisherman($("#roleAddress").val())
+      .send({ from: App.metamaskAccountID });
+  },
 
   addRegulator: async function () {
-  const addr = $("#roleAddress").val();
-  await App.contracts.Gateway.methods
-    .addRegulator(addr)
-    .send({ from: App.metamaskAccountID });
-
-  alert("Regulator role assigned to " + addr);
-},
+    await App.contracts.Gateway.methods
+      .addRegulator($("#roleAddress").val())
+      .send({ from: App.metamaskAccountID });
+  },
 
   addRestaurant: async function () {
-  const addr = $("#roleAddress").val();
-  await App.contracts.Gateway.methods
-    .addRestaurant(addr)
-    .send({ from: App.metamaskAccountID });
-
-  alert("Restaurant role assigned to " + addr);
-}
+    await App.contracts.Gateway.methods
+      .addRestaurant($("#roleAddress").val())
+      .send({ from: App.metamaskAccountID });
+  }
 };
 
 $(window).on("load", function () {
   App.init();
 });
-
-
-
-
-
