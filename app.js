@@ -462,7 +462,7 @@ App = {
     $(".btn-buy").prop("disabled", false);
     $("#currentRole").text("RESTAURANT");
   }
-}
+},
 
 
   /* ---------------- EVENTS ---------------- */
@@ -572,6 +572,7 @@ App = {
 $(window).on("load", function () {
   App.init();
 });
+
 
 
 
