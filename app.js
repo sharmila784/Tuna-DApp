@@ -121,6 +121,7 @@ App = {
 
     App.initContract();
     App.bindEvents();
+    App.checkUserRole();
   },
 
   /* ---------------- CONTRACT ---------------- */
@@ -131,6 +132,52 @@ App = {
     );
     console.log("Contract ready");
   },
+  checkUserRole: async function () {
+  const account = App.metamaskAccountID;
+
+  const isFisherman = await App.contracts.Gateway.methods
+    .isFisherman(account)
+    .call();
+
+  const isRegulator = await App.contracts.Gateway.methods
+    .isRegulator(account)
+    .call();
+
+  const isRestaurant = await App.contracts.Gateway.methods
+    .isRestaurant(account)
+    .call();
+
+  console.log("Role status:", {
+    isFisherman,
+    isRegulator,
+    isRestaurant
+  });
+
+  App.updateUIBasedOnRole(isFisherman, isRegulator, isRestaurant);
+  },
+
+  updateUIBasedOnRole: function (isFisherman, isRegulator, isRestaurant) {
+
+  // Disable all role-based buttons initially
+  $(".btn-Catch, .btn-Record, .btn-audit, .btn-buy").prop("disabled", true);
+
+  if (isFisherman) {
+    $(".btn-Catch").prop("disabled", false);
+    $(".btn-Record").prop("disabled", false);
+    $("#currentRole").text("FISHERMAN");
+  }
+
+  if (isRegulator) {
+    $(".btn-audit").prop("disabled", false);
+    $("#currentRole").text("REGULATOR");
+  }
+
+  if (isRestaurant) {
+    $(".btn-buy").prop("disabled", false);
+    $("#currentRole").text("RESTAURANT");
+  }
+}
+
 
   /* ---------------- EVENTS ---------------- */
   bindEvents: function () {
@@ -239,4 +286,5 @@ App = {
 $(window).on("load", function () {
   App.init();
 });
+
 
