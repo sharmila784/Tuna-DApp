@@ -209,27 +209,34 @@ App = {
   },
 
   addFisherman: async function () {
-    await App.contracts.Gateway.methods
-      .addFisherman(App.metamaskAccountID)
-      .send({ from: App.metamaskAccountID });
-    alert("Fisherman added");
-  },
+  const addr = $("#roleAddress").val();
+  await App.contracts.Gateway.methods
+    .addFisherman(addr)
+    .send({ from: App.metamaskAccountID });
+
+  alert("Fisherman role assigned to " + addr);
+},
 
   addRegulator: async function () {
-    await App.contracts.Gateway.methods
-      .addRegulator(App.metamaskAccountID)
-      .send({ from: App.metamaskAccountID });
-    alert("Regulator added");
-  },
+  const addr = $("#roleAddress").val();
+  await App.contracts.Gateway.methods
+    .addRegulator(addr)
+    .send({ from: App.metamaskAccountID });
+
+  alert("Regulator role assigned to " + addr);
+},
 
   addRestaurant: async function () {
-    await App.contracts.Gateway.methods
-      .addRestaurant(App.metamaskAccountID)
-      .send({ from: App.metamaskAccountID });
-    alert("Restaurant added");
-  }
+  const addr = $("#roleAddress").val();
+  await App.contracts.Gateway.methods
+    .addRestaurant(addr)
+    .send({ from: App.metamaskAccountID });
+
+  alert("Restaurant role assigned to " + addr);
+}
 };
 
 $(window).on("load", function () {
   App.init();
 });
+
