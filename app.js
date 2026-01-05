@@ -3,120 +3,385 @@ App = {
   contracts: {},
   metamaskAccountID: null,
 
-  contractAddress: "0xE84221AAbf11Cc869E77739b5AbdDfbaa23d452F",
+  contractAddress: "0x0fc1D176E98848C4819f56ebcF552A1989F3918F",
 
   contractABI: [
-     {
-      "constant": false,
-      "inputs": [{ "name": "account", "type": "address" }],
-      "name": "addFisherman",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [{ "name": "account", "type": "address" }],
-      "name": "addRegulator",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [{ "name": "account", "type": "address" }],
-      "name": "addRestaurant",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        { "name": "_upc", "type": "uint256" },
-        { "name": "_originFishermanID", "type": "address" },
-        { "name": "_originCoastLocation", "type": "string" }
-      ],
-      "name": "catchTuna",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        { "name": "_upc", "type": "uint256" },
-        { "name": "price", "type": "uint256" },
-        { "name": "tunaNotes", "type": "string" }
-      ],
-      "name": "recordTuna",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        { "name": "_upc", "type": "uint256" },
-        { "name": "_auditStatus", "type": "string" }
-      ],
-      "name": "auditTuna",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        { "name": "_upc", "type": "uint256" },
-        { "name": "_price", "type": "uint256" }
-      ],
-      "name": "buyTuna",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [{ "name": "account", "type": "address" }],
-      "name": "isFisherman",
-      "outputs": [{ "type": "bool" }],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [{ "name": "account", "type": "address" }],
-      "name": "isRegulator",
-      "outputs": [{ "type": "bool" }],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [{ "name": "account", "type": "address" }],
-      "name": "isRestaurant",
-      "outputs": [{ "type": "bool" }],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [{ "name": "_upc", "type": "uint256" }],
-      "name": "queryTuna",
-      "outputs": [
-        { "type": "address" },
-        { "type": "string" },
-        { "type": "string" },
-        { "type": "uint256" },
-        { "type": "uint8" },
-        { "type": "address" },
-        { "type": "string" }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    }
-  ],
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "addFisherman",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "addRegulator",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "addRestaurant",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_upc",
+				"type": "uint256"
+			},
+			{
+				"name": "_auditStatus",
+				"type": "string"
+			}
+		],
+		"name": "auditTuna",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_upc",
+				"type": "uint256"
+			},
+			{
+				"name": "_price",
+				"type": "uint256"
+			}
+		],
+		"name": "buyTuna",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_upc",
+				"type": "uint256"
+			},
+			{
+				"name": "_originFishermanID",
+				"type": "address"
+			},
+			{
+				"name": "_originCoastLocation",
+				"type": "string"
+			}
+		],
+		"name": "catchTuna",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_upc",
+				"type": "uint256"
+			},
+			{
+				"name": "price",
+				"type": "uint256"
+			},
+			{
+				"name": "tunaNotes",
+				"type": "string"
+			}
+		],
+		"name": "recordTuna",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "renounceFisherman",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "renounceRegulator",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "renounceRestaurant",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "upc",
+				"type": "uint256"
+			}
+		],
+		"name": "Caught",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "upc",
+				"type": "uint256"
+			}
+		],
+		"name": "Recorded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "upc",
+				"type": "uint256"
+			}
+		],
+		"name": "Audited",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "upc",
+				"type": "uint256"
+			}
+		],
+		"name": "Bought",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "RestaurantAdded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "RestaurantRemoved",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "RegulatorAdded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "RegulatorRemoved",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "FishermanAdded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "FishermanRemoved",
+		"type": "event"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "isFisherman",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "isRegulator",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "isRestaurant",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_upc",
+				"type": "uint256"
+			}
+		],
+		"name": "queryTuna",
+		"outputs": [
+			{
+				"name": "ownerID",
+				"type": "address"
+			},
+			{
+				"name": "originCoastLocation",
+				"type": "string"
+			},
+			{
+				"name": "tunaNotes",
+				"type": "string"
+			},
+			{
+				"name": "tunaPrice",
+				"type": "uint256"
+			},
+			{
+				"name": "tunaState",
+				"type": "uint8"
+			},
+			{
+				"name": "regulatorID",
+				"type": "address"
+			},
+			{
+				"name": "auditStatus",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+],
 
   /* ---------------- INIT ---------------- */
   init: async function () {
@@ -330,3 +595,4 @@ App = {
 $(window).on("load", function () {
   App.init();
 });
+
