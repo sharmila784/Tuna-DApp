@@ -3,12 +3,10 @@ App = {
   contracts: {},
   metamaskAccountID: null,
 
-  // 🔁 UPDATE this when you redeploy
   contractAddress: "0xE84221AAbf11Cc869E77739b5AbdDfbaa23d452F",
 
-  /* ---------------- ABI ---------------- */
   contractABI: [
-    {
+     {
       "constant": false,
       "inputs": [{ "name": "account", "type": "address" }],
       "name": "addFisherman",
@@ -122,61 +120,98 @@ App = {
 
   /* ---------------- INIT ---------------- */
   init: async function () {
+    await App.initWeb3();
+  },
+
+  /* ---------------- WEB3 ---------------- */
+  initWeb3: async function () {
     if (!window.ethereum) {
-      alert("Install MetaMask");
+      alert("Please install MetaMask");
       return;
     }
 
     App.web3Provider = window.ethereum;
+    web3 = new Web3(window.ethereum);
+
     await window.ethereum.request({ method: "eth_requestAccounts" });
 
-    web3 = new Web3(App.web3Provider);
     const accounts = await web3.eth.getAccounts();
     App.metamaskAccountID = accounts[0];
 
+    console.log("Connected account:", App.metamaskAccountID);
+
+    // 🔥 IMPORTANT: listen for account change
+    window.ethereum.on("accountsChanged", async function (accounts) {
+      App.metamaskAccountID = accounts[0];
+      console.log("Account switched to:", App.metamaskAccountID);
+      await App.checkUserRole();
+    });
+
+    App.initContract();
+    App.bindEvents();
+    await App.checkUserRole();
+  },
+
+  /* ---------------- CONTRACT ---------------- */
+  initContract: function () {
     App.contracts.Gateway = new web3.eth.Contract(
       App.contractABI,
       App.contractAddress
     );
-
-    App.bindEvents();
-    App.checkUserRole();
-
-    // 🔁 Account switch support
-    window.ethereum.on("accountsChanged", function (accounts) {
-      App.metamaskAccountID = accounts[0];
-      App.checkUserRole();
-    });
+    console.log("Contract initialized");
   },
 
-  /* ---------------- ROLE LOGIC ---------------- */
+  /* ---------------- ROLE CHECK ---------------- */
   checkUserRole: async function () {
-    const a = App.metamaskAccountID;
+    if (!App.contracts.Gateway || !App.metamaskAccountID) return;
 
-    const isReg = await App.contracts.Gateway.methods.isRegulator(a).call();
-    const isFish = await App.contracts.Gateway.methods.isFisherman(a).call();
-    const isRest = await App.contracts.Gateway.methods.isRestaurant(a).call();
+    const account = App.metamaskAccountID;
 
-    let role = "NOT ASSIGNED";
-    if (isReg) role = "REGULATOR";
-    else if (isFish) role = "FISHERMAN";
-    else if (isRest) role = "RESTAURANT";
+    const isFisherman = await App.contracts.Gateway.methods
+      .isFisherman(account)
+      .call();
 
-    $("#currentRole").text(role);
-    App.updateUI(role);
+    const isRegulator = await App.contracts.Gateway.methods
+      .isRegulator(account)
+      .call();
+
+    const isRestaurant = await App.contracts.Gateway.methods
+      .isRestaurant(account)
+      .call();
+
+    console.log("Role check:", {
+      account,
+      isFisherman,
+      isRegulator,
+      isRestaurant
+    });
+
+    App.updateUIBasedOnRole(isFisherman, isRegulator, isRestaurant);
   },
 
-  updateUI: function (role) {
-    $(".btn-Catch,.btn-Record,.btn-audit,.btn-buy").hide();
+  updateUIBasedOnRole: function (isFisherman, isRegulator, isRestaurant) {
 
-    if (role === "FISHERMAN") {
-      $(".btn-Catch,.btn-Record").show();
+    // Reset everything
+    $(".btn-Catch, .btn-Record, .btn-audit, .btn-buy").prop("disabled", true);
+    $("#currentRole").text("NOT ASSIGNED");
+
+    if (isFisherman) {
+      $(".btn-Catch").prop("disabled", false);
+      $(".btn-Record").prop("disabled", false);
+      $("#currentRole").text("FISHERMAN");
+      return;
     }
-    if (role === "REGULATOR") {
-      $(".btn-audit").show();
+
+    if (isRegulator) {
+      $(".btn-audit").prop("disabled", false);
+      $("#currentRole").text("REGULATOR");
+      return;
     }
-    if (role === "RESTAURANT") {
-      $(".btn-buy").show();
+
+    if (isRestaurant) {
+      $(".btn-buy").prop("disabled", false);
+      $("#currentRole").text("RESTAURANT");
+      return;
     }
   },
 
@@ -185,57 +220,85 @@ App = {
     $(document).on("click", "button", App.handleButtonClick);
   },
 
-  handleButtonClick: function (e) {
-    const id = $(e.target).data("id");
-    if (id === 1) App.catchTuna();
-    if (id === 2) App.recordTuna();
-    if (id === 4) App.auditTuna();
-    if (id === 5) App.queryTuna();
-    if (id === 6) App.buyTuna();
-    if (id === 7) App.addFisherman();
-    if (id === 8) App.addRegulator();
-    if (id === 9) App.addRestaurant();
+  handleButtonClick: function (event) {
+    event.preventDefault();
+    const processId = parseInt($(event.target).data("id"));
+
+    switch (processId) {
+      case 1: return App.catchTuna();
+      case 2: return App.recordTuna();
+      case 4: return App.auditTuna();
+      case 5: return App.queryTuna();
+      case 6: return App.buyTuna();
+      case 7: return App.addFisherman();
+      case 8: return App.addRegulator();
+      case 9: return App.addRestaurant();
+    }
   },
 
-  /* ---------------- ACTIONS ---------------- */
+  /* ---------------- FUNCTIONS ---------------- */
+
   catchTuna: async function () {
     await App.contracts.Gateway.methods
-      .catchTuna($("#upc").val(), App.metamaskAccountID, $("#originCoastLocation").val())
+      .catchTuna(
+        $("#upc").val(),
+        App.metamaskAccountID,
+        $("#originCoastLocation").val()
+      )
       .send({ from: App.metamaskAccountID });
+
+    alert("Tuna caught");
   },
 
   recordTuna: async function () {
     await App.contracts.Gateway.methods
-      .recordTuna($("#upcRec").val(), $("#tunaPrice").val(), $("#tunaNotes").val())
+      .recordTuna(
+        $("#upcRec").val(),
+        $("#tunaPrice").val(),
+        $("#tunaNotes").val()
+      )
       .send({ from: App.metamaskAccountID });
+
+    alert("Tuna recorded");
   },
 
   auditTuna: async function () {
     await App.contracts.Gateway.methods
-      .auditTuna($("#upcAud").val(), $("#auditStatus").val())
+      .auditTuna(
+        $("#upcAud").val(),
+        $("#auditStatus").val()
+      )
       .send({ from: App.metamaskAccountID });
+
+    alert("Tuna audited");
   },
 
   buyTuna: async function () {
     const price = $("#tunaPrice_Buy").val();
+
     await App.contracts.Gateway.methods
       .buyTuna($("#upcBuy").val(), price)
-      .send({ from: App.metamaskAccountID, value: price });
+      .send({
+        from: App.metamaskAccountID,
+        value: price
+      });
+
+    alert("Tuna bought");
   },
 
   queryTuna: async function () {
-    const r = await App.contracts.Gateway.methods
+    const result = await App.contracts.Gateway.methods
       .queryTuna($("#fishID").val())
       .call();
 
     $("#ftc-item").html(`
-      Owner: ${r[0]} <br>
-      Location: ${r[1]} <br>
-      Notes: ${r[2]} <br>
-      Price: ${r[3]} <br>
-      State: ${r[4]} <br>
-      Regulator: ${r[5]} <br>
-      Audit: ${r[6]}
+      <li><b>Owner:</b> ${result[0]}</li>
+      <li><b>Location:</b> ${result[1]}</li>
+      <li><b>Notes:</b> ${result[2]}</li>
+      <li><b>Price:</b> ${result[3]}</li>
+      <li><b>State:</b> ${result[4]}</li>
+      <li><b>Regulator:</b> ${result[5]}</li>
+      <li><b>Audit:</b> ${result[6]}</li>
     `);
   },
 
@@ -243,18 +306,24 @@ App = {
     await App.contracts.Gateway.methods
       .addFisherman($("#roleAddress").val())
       .send({ from: App.metamaskAccountID });
+
+    alert("Fisherman added");
   },
 
   addRegulator: async function () {
     await App.contracts.Gateway.methods
       .addRegulator($("#roleAddress").val())
       .send({ from: App.metamaskAccountID });
+
+    alert("Regulator added");
   },
 
   addRestaurant: async function () {
     await App.contracts.Gateway.methods
       .addRestaurant($("#roleAddress").val())
       .send({ from: App.metamaskAccountID });
+
+    alert("Restaurant added");
   }
 };
 
