@@ -3,7 +3,7 @@ App = {
   contracts: {},
   metamaskAccountID: null,
 
-  contractAddress: "0x0fc1D176E98848C4819f56ebcF552A1989F3918F",
+  contractAddress: "0x4bE880a99c947b82e1d49B320Db8C42e2baCc83D",
 
   contractABI: [
 	{
@@ -56,7 +56,7 @@ App = {
 				"type": "uint256"
 			},
 			{
-				"name": "_auditStatus",
+				"name": "status",
 				"type": "string"
 			}
 		],
@@ -71,10 +71,6 @@ App = {
 		"inputs": [
 			{
 				"name": "_upc",
-				"type": "uint256"
-			},
-			{
-				"name": "_price",
 				"type": "uint256"
 			}
 		],
@@ -96,11 +92,20 @@ App = {
 				"type": "address"
 			},
 			{
-				"name": "_originCoastLocation",
+				"name": "_location",
 				"type": "string"
 			}
 		],
 		"name": "catchTuna",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "kill",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -118,7 +123,7 @@ App = {
 				"type": "uint256"
 			},
 			{
-				"name": "tunaNotes",
+				"name": "notes",
 				"type": "string"
 			}
 		],
@@ -130,8 +135,41 @@ App = {
 	},
 	{
 		"constant": false,
-		"inputs": [],
-		"name": "renounceFisherman",
+		"inputs": [
+			{
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "removeFisherman",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "removeRegulator",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "removeRestaurant",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -140,7 +178,7 @@ App = {
 	{
 		"constant": false,
 		"inputs": [],
-		"name": "renounceRegulator",
+		"name": "renounceOwnership",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -148,8 +186,13 @@ App = {
 	},
 	{
 		"constant": false,
-		"inputs": [],
-		"name": "renounceRestaurant",
+		"inputs": [
+			{
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -282,6 +325,23 @@ App = {
 		"type": "event"
 	},
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "oldOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "TransferOwnership",
+		"type": "event"
+	},
+	{
 		"constant": true,
 		"inputs": [
 			{
@@ -290,6 +350,20 @@ App = {
 			}
 		],
 		"name": "isFisherman",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "isOwner",
 		"outputs": [
 			{
 				"name": "",
@@ -340,41 +414,26 @@ App = {
 	},
 	{
 		"constant": true,
-		"inputs": [
-			{
-				"name": "_upc",
-				"type": "uint256"
-			}
-		],
-		"name": "queryTuna",
+		"inputs": [],
+		"name": "owner",
 		"outputs": [
 			{
-				"name": "ownerID",
+				"name": "",
 				"type": "address"
-			},
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "upc",
+		"outputs": [
 			{
-				"name": "originCoastLocation",
-				"type": "string"
-			},
-			{
-				"name": "tunaNotes",
-				"type": "string"
-			},
-			{
-				"name": "tunaPrice",
+				"name": "",
 				"type": "uint256"
-			},
-			{
-				"name": "tunaState",
-				"type": "uint8"
-			},
-			{
-				"name": "regulatorID",
-				"type": "address"
-			},
-			{
-				"name": "auditStatus",
-				"type": "string"
 			}
 		],
 		"payable": false,
@@ -383,12 +442,12 @@ App = {
 	}
 ],
 
-  /* ---------------- INIT ---------------- */
+  /* ---------- INIT ---------- */
   init: async function () {
     await App.initWeb3();
   },
 
-  /* ---------------- WEB3 ---------------- */
+  /* ---------- WEB3 ---------- */
   initWeb3: async function () {
     if (!window.ethereum) {
       alert("Please install MetaMask");
@@ -405,19 +464,18 @@ App = {
 
     console.log("Connected account:", App.metamaskAccountID);
 
-    // 🔥 IMPORTANT: listen for account change
-    window.ethereum.on("accountsChanged", async function (accounts) {
+    window.ethereum.on("accountsChanged", function (accounts) {
       App.metamaskAccountID = accounts[0];
-      console.log("Account switched to:", App.metamaskAccountID);
-      await App.checkUserRole();
+      console.log("Account switched:", App.metamaskAccountID);
+      App.checkUserRole();
     });
 
     App.initContract();
     App.bindEvents();
-    await App.checkUserRole();
+    App.checkUserRole();
   },
 
-  /* ---------------- CONTRACT ---------------- */
+  /* ---------- CONTRACT ---------- */
   initContract: function () {
     App.contracts.Gateway = new web3.eth.Contract(
       App.contractABI,
@@ -426,10 +484,8 @@ App = {
     console.log("Contract initialized");
   },
 
-  /* ---------------- ROLE CHECK ---------------- */
+  /* ---------- ROLE CHECK ---------- */
   checkUserRole: async function () {
-    if (!App.contracts.Gateway || !App.metamaskAccountID) return;
-
     const account = App.metamaskAccountID;
 
     const isFisherman = await App.contracts.Gateway.methods
@@ -444,8 +500,7 @@ App = {
       .isRestaurant(account)
       .call();
 
-    console.log("Role check:", {
-      account,
+    console.log("Role status:", {
       isFisherman,
       isRegulator,
       isRestaurant
@@ -454,46 +509,43 @@ App = {
     App.updateUIBasedOnRole(isFisherman, isRegulator, isRestaurant);
   },
 
+  /* ---------- UI CONTROL ---------- */
   updateUIBasedOnRole: function (isFisherman, isRegulator, isRestaurant) {
 
-    // Reset everything
-    $(".btn-Catch, .btn-Record, .btn-audit, .btn-buy").prop("disabled", true);
+    // Disable everything first
+    $(".btn-Catch, .btn-Record, .btn-Audit, .btn-Buy").prop("disabled", true);
     $("#currentRole").text("NOT ASSIGNED");
 
     if (isFisherman) {
-      $(".btn-Catch").prop("disabled", false);
-      $(".btn-Record").prop("disabled", false);
+      $(".btn-Catch, .btn-Record").prop("disabled", false);
       $("#currentRole").text("FISHERMAN");
-      return;
     }
 
     if (isRegulator) {
-      $(".btn-audit").prop("disabled", false);
+      $(".btn-Audit").prop("disabled", false);
       $("#currentRole").text("REGULATOR");
-      return;
     }
 
     if (isRestaurant) {
-      $(".btn-buy").prop("disabled", false);
+      $(".btn-Buy").prop("disabled", false);
       $("#currentRole").text("RESTAURANT");
-      return;
     }
   },
 
-  /* ---------------- EVENTS ---------------- */
+  /* ---------- EVENTS ---------- */
   bindEvents: function () {
     $(document).on("click", "button", App.handleButtonClick);
   },
 
   handleButtonClick: function (event) {
     event.preventDefault();
+
     const processId = parseInt($(event.target).data("id"));
 
     switch (processId) {
       case 1: return App.catchTuna();
       case 2: return App.recordTuna();
       case 4: return App.auditTuna();
-      case 5: return App.queryTuna();
       case 6: return App.buyTuna();
       case 7: return App.addFisherman();
       case 8: return App.addRegulator();
@@ -501,7 +553,7 @@ App = {
     }
   },
 
-  /* ---------------- FUNCTIONS ---------------- */
+  /* ---------- BUSINESS FUNCTIONS ---------- */
 
   catchTuna: async function () {
     await App.contracts.Gateway.methods
@@ -551,48 +603,42 @@ App = {
     alert("Tuna bought");
   },
 
-  queryTuna: async function () {
-    const result = await App.contracts.Gateway.methods
-      .queryTuna($("#fishID").val())
-      .call();
-
-    $("#ftc-item").html(`
-      <li><b>Owner:</b> ${result[0]}</li>
-      <li><b>Location:</b> ${result[1]}</li>
-      <li><b>Notes:</b> ${result[2]}</li>
-      <li><b>Price:</b> ${result[3]}</li>
-      <li><b>State:</b> ${result[4]}</li>
-      <li><b>Regulator:</b> ${result[5]}</li>
-      <li><b>Audit:</b> ${result[6]}</li>
-    `);
-  },
+  /* ---------- ADMIN ROLE ASSIGNMENT ---------- */
 
   addFisherman: async function () {
+    const addr = $("#roleAddress").val();
+
     await App.contracts.Gateway.methods
-      .addFisherman($("#roleAddress").val())
+      .addFisherman(addr)
       .send({ from: App.metamaskAccountID });
 
-    alert("Fisherman added");
+    alert("Fisherman assigned");
+    App.checkUserRole();
   },
 
   addRegulator: async function () {
+    const addr = $("#roleAddress").val();
+
     await App.contracts.Gateway.methods
-      .addRegulator($("#roleAddress").val())
+      .addRegulator(addr)
       .send({ from: App.metamaskAccountID });
 
-    alert("Regulator added");
+    alert("Regulator assigned");
+    App.checkUserRole();
   },
 
   addRestaurant: async function () {
+    const addr = $("#roleAddress").val();
+
     await App.contracts.Gateway.methods
-      .addRestaurant($("#roleAddress").val())
+      .addRestaurant(addr)
       .send({ from: App.metamaskAccountID });
 
-    alert("Restaurant added");
+    alert("Restaurant assigned");
+    App.checkUserRole();
   }
 };
 
 $(window).on("load", function () {
   App.init();
 });
-
