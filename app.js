@@ -3,7 +3,7 @@ App = {
   contracts: {},
   metamaskAccountID: null,
 
-  contractAddress: "0xFEc39B6E85F6a95741c063c32244db88402F88F6",
+  contractAddress: "0x8Eee53787CaC56C1293b5E33D643aC2070fbc052",
   contractABI: [
 	{
 		"constant": false,
@@ -424,7 +424,7 @@ App = {
 		"stateMutability": "view",
 		"type": "function"
 	}
-]
+],
 
   /* ---------- INIT ---------- */
   init: async function () {
@@ -581,4 +581,5 @@ App = {
 };
 
 $(window).on("load", App.init);
+
 
