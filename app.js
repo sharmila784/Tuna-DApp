@@ -583,22 +583,30 @@ App = {
     console.log(" Catch Tuna clicked");
 
     const upc = $("#upc").val();
-    const location = $("#originFarmInformation").val();
+    const location = $("#location").val(); // MUST EXIST
+    const fisherman = App.metamaskAccountID; // sender
 
     console.log(" UPC:", upc);
+    console.log(" Fisherman:", fisherman);
     console.log(" Location:", location);
 
+    if (!upc || !location) {
+      alert("UPC and Location are required");
+      return;
+    }
+
     await App.contracts.Gateway.methods
-      .catchTuna(upc, App.metamaskAccountID, location)
+      .catchTuna(upc, fisherman, location)
       .send({ from: App.metamaskAccountID });
 
     alert("Tuna caught successfully");
 
   } catch (err) {
-    console.error(" Catch Tuna failed:", err);
+    console.error("Catch Tuna failed:", err);
     alert(err.message || "Catch Tuna failed");
   }
 },
+
 	recordTuna: async function () {
   try {
     console.log(" Record Tuna clicked");
@@ -729,6 +737,7 @@ addRestaurant: async function () {
 };
 
 $(window).on("load", App.init);
+
 
 
 
