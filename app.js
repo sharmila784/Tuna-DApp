@@ -577,6 +577,66 @@ App = {
 
     alert("Tuna Bought");
   },
+  
+	catchTuna: async function () {
+  try {
+    console.log(" Catch Tuna clicked");
+
+    const upc = $("#upc").val();
+    const location = $("#originFarmInformation").val();
+
+    console.log(" UPC:", upc);
+    console.log(" Location:", location);
+
+    await App.contracts.Gateway.methods
+      .catchTuna(upc, App.metamaskAccountID, location)
+      .send({ from: App.metamaskAccountID });
+
+    alert("Tuna caught successfully");
+
+  } catch (err) {
+    console.error(" Catch Tuna failed:", err);
+    alert(err.message || "Catch Tuna failed");
+  }
+},
+	recordTuna: async function () {
+  try {
+    console.log(" Record Tuna clicked");
+
+    const upc = $("#upc").val();
+    const price = $("#tunaPrice").val();
+    const notes = $("#productNotes").val();
+
+    await App.contracts.Gateway.methods
+      .recordTuna(upc, price, notes)
+      .send({ from: App.metamaskAccountID });
+
+    alert("Tuna recorded successfully");
+
+  } catch (err) {
+    console.error(" Record Tuna failed:", err);
+    alert(err.message || "Record Tuna failed");
+  }
+},
+auditTuna: async function () {
+  try {
+    console.log(" Audit Tuna clicked");
+
+    const upc = $("#upcAudit").val();
+    const status = $("#auditStatus").val();
+
+    await App.contracts.Gateway.methods
+      .auditTuna(upc, status)
+      .send({ from: App.metamaskAccountID });
+
+    alert("Tuna audited successfully");
+
+  } catch (err) {
+    console.error(" Audit Tuna failed:", err);
+    alert(err.message || "Audit Tuna failed");
+  }
+},
+
 
   /* ---------- ADMIN ---------- */
   addFisherman: async function () {
@@ -665,9 +725,11 @@ addRestaurant: async function () {
     alert(error.message || "Add Restaurant failed");
   }
 }
+	
 };
 
 $(window).on("load", App.init);
+
 
 
 
