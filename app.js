@@ -4,7 +4,7 @@ App = {
   metamaskAccountID: null,
 
   contractAddress: "0x4bE880a99c947b82e1d49B320Db8C42e2baCc83D",
-
+	
   contractABI: [
 	{
 		"constant": false,
@@ -442,12 +442,14 @@ App = {
 	}
 ],
 
-  /* ---------- INIT ---------- */
+
+
+  /* ---------------- INIT ---------------- */
   init: async function () {
     await App.initWeb3();
   },
 
-  /* ---------- WEB3 ---------- */
+  /* ---------------- WEB3 ---------------- */
   initWeb3: async function () {
     if (!window.ethereum) {
       alert("Please install MetaMask");
@@ -457,16 +459,15 @@ App = {
     App.web3Provider = window.ethereum;
     web3 = new Web3(window.ethereum);
 
-    await window.ethereum.request({ method: "eth_requestAccounts" });
+    await ethereum.request({ method: "eth_requestAccounts" });
 
     const accounts = await web3.eth.getAccounts();
     App.metamaskAccountID = accounts[0];
 
-    console.log("Connected account:", App.metamaskAccountID);
+    console.log("Connected:", App.metamaskAccountID);
 
-    window.ethereum.on("accountsChanged", function (accounts) {
+    ethereum.on("accountsChanged", function (accounts) {
       App.metamaskAccountID = accounts[0];
-      console.log("Account switched:", App.metamaskAccountID);
       App.checkUserRole();
     });
 
@@ -475,64 +476,59 @@ App = {
     App.checkUserRole();
   },
 
-  /* ---------- CONTRACT ---------- */
+  /* ---------------- CONTRACT ---------------- */
   initContract: function () {
     App.contracts.Gateway = new web3.eth.Contract(
       App.contractABI,
       App.contractAddress
     );
-    console.log("Contract initialized");
   },
 
-  /* ---------- ROLE CHECK ---------- */
+  /* ---------------- ROLE CHECK ---------------- */
   checkUserRole: async function () {
-    const account = App.metamaskAccountID;
+    const acc = App.metamaskAccountID;
 
-    const isFisherman = await App.contracts.Gateway.methods
-      .isFisherman(account)
-      .call();
+    const isOwner = await App.contracts.Gateway.methods.isOwner().call({ from: acc });
+    const isFisherman = await App.contracts.Gateway.methods.isFisherman(acc).call();
+    const isRegulator = await App.contracts.Gateway.methods.isRegulator(acc).call();
+    const isRestaurant = await App.contracts.Gateway.methods.isRestaurant(acc).call();
 
-    const isRegulator = await App.contracts.Gateway.methods
-      .isRegulator(account)
-      .call();
+    console.log({ isOwner, isFisherman, isRegulator, isRestaurant });
 
-    const isRestaurant = await App.contracts.Gateway.methods
-      .isRestaurant(account)
-      .call();
-
-    console.log("Role status:", {
-      isFisherman,
-      isRegulator,
-      isRestaurant
-    });
-
-    App.updateUIBasedOnRole(isFisherman, isRegulator, isRestaurant);
+    App.updateUI(isOwner, isFisherman, isRegulator, isRestaurant);
   },
 
-  /* ---------- UI CONTROL ---------- */
-  updateUIBasedOnRole: function (isFisherman, isRegulator, isRestaurant) {
+  /* ---------------- UI CONTROL ---------------- */
+  updateUI: function (isOwner, isFisherman, isRegulator, isRestaurant) {
 
-    // Disable everything first
-    $(".btn-Catch, .btn-Record, .btn-Audit, .btn-Buy").prop("disabled", true);
+    $("button").prop("disabled", true);
     $("#currentRole").text("NOT ASSIGNED");
 
+    // Query is public
+    $(".btn-query").prop("disabled", false);
+
+    if (isOwner) {
+      $("#currentRole").text("ADMIN");
+      $("[data-id='7'], [data-id='8'], [data-id='9']").prop("disabled", false);
+    }
+
     if (isFisherman) {
-      $(".btn-Catch, .btn-Record").prop("disabled", false);
       $("#currentRole").text("FISHERMAN");
+      $(".btn-Catch, .btn-Record").prop("disabled", false);
     }
 
     if (isRegulator) {
-      $(".btn-Audit").prop("disabled", false);
       $("#currentRole").text("REGULATOR");
+      $(".btn-Audit").prop("disabled", false);
     }
 
     if (isRestaurant) {
-      $(".btn-Buy").prop("disabled", false);
       $("#currentRole").text("RESTAURANT");
+      $(".btn-Buy").prop("disabled", false);
     }
   },
 
-  /* ---------- EVENTS ---------- */
+  /* ---------------- EVENTS ---------------- */
   bindEvents: function () {
     $(document).on("click", "button", App.handleButtonClick);
   },
@@ -540,12 +536,13 @@ App = {
   handleButtonClick: function (event) {
     event.preventDefault();
 
-    const processId = parseInt($(event.target).data("id"));
+    const id = parseInt($(event.target).data("id"));
 
-    switch (processId) {
+    switch (id) {
       case 1: return App.catchTuna();
       case 2: return App.recordTuna();
       case 4: return App.auditTuna();
+      case 5: return App.queryTuna();
       case 6: return App.buyTuna();
       case 7: return App.addFisherman();
       case 8: return App.addRegulator();
@@ -553,7 +550,7 @@ App = {
     }
   },
 
-  /* ---------- BUSINESS FUNCTIONS ---------- */
+  /* ---------------- BUSINESS LOGIC ---------------- */
 
   catchTuna: async function () {
     await App.contracts.Gateway.methods
@@ -564,7 +561,7 @@ App = {
       )
       .send({ from: App.metamaskAccountID });
 
-    alert("Tuna caught");
+    alert("Tuna Caught");
   },
 
   recordTuna: async function () {
@@ -576,7 +573,7 @@ App = {
       )
       .send({ from: App.metamaskAccountID });
 
-    alert("Tuna recorded");
+    alert("Tuna Recorded");
   },
 
   auditTuna: async function () {
@@ -587,7 +584,7 @@ App = {
       )
       .send({ from: App.metamaskAccountID });
 
-    alert("Tuna audited");
+    alert("Tuna Audited");
   },
 
   buyTuna: async function () {
@@ -600,42 +597,53 @@ App = {
         value: price
       });
 
-    alert("Tuna bought");
+    alert("Tuna Bought");
   },
 
-  /* ---------- ADMIN ROLE ASSIGNMENT ---------- */
+  /* ---------------- QUERY ---------------- */
+
+  queryTuna: async function () {
+    const upc = $("#fishID").val();
+
+    const data = await App.contracts.Gateway.methods
+      .queryTuna(upc)
+      .call();
+
+    $("#ftc-item").html(`
+      <li>Owner: ${data[0]}</li>
+      <li>Location: ${data[1]}</li>
+      <li>Notes: ${data[2]}</li>
+      <li>Price: ${data[3]}</li>
+      <li>State: ${["Caught","Recorded","Audited","Bought"][data[4]]}</li>
+      <li>Regulator: ${data[5]}</li>
+      <li>Status: ${data[6]}</li>
+    `);
+  },
+
+  /* ---------------- ADMIN ---------------- */
 
   addFisherman: async function () {
-    const addr = $("#roleAddress").val();
-
     await App.contracts.Gateway.methods
-      .addFisherman(addr)
+      .addFisherman($("#roleAddress").val())
       .send({ from: App.metamaskAccountID });
 
-    alert("Fisherman assigned");
-    App.checkUserRole();
+    alert("Fisherman Added");
   },
 
   addRegulator: async function () {
-    const addr = $("#roleAddress").val();
-
     await App.contracts.Gateway.methods
-      .addRegulator(addr)
+      .addRegulator($("#roleAddress").val())
       .send({ from: App.metamaskAccountID });
 
-    alert("Regulator assigned");
-    App.checkUserRole();
+    alert("Regulator Added");
   },
 
   addRestaurant: async function () {
-    const addr = $("#roleAddress").val();
-
     await App.contracts.Gateway.methods
-      .addRestaurant(addr)
+      .addRestaurant($("#roleAddress").val())
       .send({ from: App.metamaskAccountID });
 
-    alert("Restaurant assigned");
-    App.checkUserRole();
+    alert("Restaurant Added");
   }
 };
 
