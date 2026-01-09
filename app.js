@@ -605,26 +605,33 @@ catchTuna: async function () {
   }
 },
 
+recordTuna: async function () {
+  const upc = $("#upcRec").val();
+  const price = $("#tunaPrice").val();
+  const notes = $("#tunaNotes").val();
 
-	recordTuna: async function () {
+  console.log("Record Tuna clicked");
+  console.log("UPC:", upc);
+  console.log("Price:", price);
+  console.log("Notes:", notes);
+
+  if (!upc || !price || !notes) {
+    alert("UPC, price, and notes are required");
+    return;
+  }
+
   try {
-    console.log(" Record Tuna clicked");
-
-    const upc = $("#upc").val();
-    const price = $("#tunaPrice").val();
-    const notes = $("#productNotes").val();
-
     await App.contracts.Gateway.methods
       .recordTuna(upc, price, notes)
       .send({ from: App.metamaskAccountID });
 
-    alert("Tuna recorded successfully");
-
+    alert("Tuna successfully recorded");
   } catch (err) {
-    console.error(" Record Tuna failed:", err);
-    alert(err.message || "Record Tuna failed");
+    console.error("Record Tuna failed:", err);
+    alert("Record Tuna transaction failed. Check console.");
   }
 },
+
 auditTuna: async function () {
   try {
     console.log(" Audit Tuna clicked");
@@ -736,6 +743,7 @@ addRestaurant: async function () {
 };
 
 $(window).on("load", App.init);
+
 
 
 
