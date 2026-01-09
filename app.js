@@ -4,7 +4,6 @@ App = {
   metamaskAccountID: null,
 
   contractAddress: "0x4bE880a99c947b82e1d49B320Db8C42e2baCc83D",
-	
   contractABI: [
 	{
 		"constant": false,
@@ -443,28 +442,23 @@ App = {
 ],
 
 
-
-  /* ---------------- INIT ---------------- */
+  /* ---------- INIT ---------- */
   init: async function () {
     await App.initWeb3();
   },
 
-  /* ---------------- WEB3 ---------------- */
+  /* ---------- WEB3 ---------- */
   initWeb3: async function () {
     if (!window.ethereum) {
       alert("Please install MetaMask");
       return;
     }
 
-    App.web3Provider = window.ethereum;
     web3 = new Web3(window.ethereum);
-
     await ethereum.request({ method: "eth_requestAccounts" });
 
     const accounts = await web3.eth.getAccounts();
     App.metamaskAccountID = accounts[0];
-
-    console.log("Connected:", App.metamaskAccountID);
 
     ethereum.on("accountsChanged", function (accounts) {
       App.metamaskAccountID = accounts[0];
@@ -476,7 +470,7 @@ App = {
     App.checkUserRole();
   },
 
-  /* ---------------- CONTRACT ---------------- */
+  /* ---------- CONTRACT ---------- */
   initContract: function () {
     App.contracts.Gateway = new web3.eth.Contract(
       App.contractABI,
@@ -484,28 +478,23 @@ App = {
     );
   },
 
-  /* ---------------- ROLE CHECK ---------------- */
+  /* ---------- ROLE CHECK ---------- */
   checkUserRole: async function () {
     const acc = App.metamaskAccountID;
 
-    const isOwner = await App.contracts.Gateway.methods.isOwner().call({ from: acc });
+    const isOwner = await App.contracts.Gateway.methods.isOwner().call();
     const isFisherman = await App.contracts.Gateway.methods.isFisherman(acc).call();
     const isRegulator = await App.contracts.Gateway.methods.isRegulator(acc).call();
     const isRestaurant = await App.contracts.Gateway.methods.isRestaurant(acc).call();
 
-    console.log({ isOwner, isFisherman, isRegulator, isRestaurant });
-
     App.updateUI(isOwner, isFisherman, isRegulator, isRestaurant);
   },
 
-  /* ---------------- UI CONTROL ---------------- */
+  /* ---------- UI CONTROL ---------- */
   updateUI: function (isOwner, isFisherman, isRegulator, isRestaurant) {
-
     $("button").prop("disabled", true);
-    $("#currentRole").text("NOT ASSIGNED");
-
-    // Query is public
     $(".btn-query").prop("disabled", false);
+    $("#currentRole").text("NOT ASSIGNED");
 
     if (isOwner) {
       $("#currentRole").text("ADMIN");
@@ -528,14 +517,13 @@ App = {
     }
   },
 
-  /* ---------------- EVENTS ---------------- */
+  /* ---------- EVENTS ---------- */
   bindEvents: function () {
     $(document).on("click", "button", App.handleButtonClick);
   },
 
   handleButtonClick: function (event) {
     event.preventDefault();
-
     const id = parseInt($(event.target).data("id"));
 
     switch (id) {
@@ -550,48 +538,36 @@ App = {
     }
   },
 
-  /* ---------------- BUSINESS LOGIC ---------------- */
+  /* ---------- QUERY ---------- */
+  queryTuna: async function () {
+    try {
+      const upc = $("#fishID").val();
 
-  catchTuna: async function () {
-    await App.contracts.Gateway.methods
-      .catchTuna(
-        $("#upc").val(),
-        App.metamaskAccountID,
-        $("#originCoastLocation").val()
-      )
-      .send({ from: App.metamaskAccountID });
+      const data = await App.contracts.Gateway.methods
+        .queryTuna(upc)
+        .call();
 
-    alert("Tuna Caught");
+      $("#ftc-item").html(`
+        <li>Owner: ${data[0]}</li>
+        <li>Location: ${data[1]}</li>
+        <li>Notes: ${data[2]}</li>
+        <li>Price: ${data[3]}</li>
+        <li>State: ${["Caught","Recorded","Audited","Bought"][data[4]]}</li>
+        <li>Regulator: ${data[5]}</li>
+        <li>Status: ${data[6]}</li>
+      `);
+    } catch (err) {
+      console.error(err);
+      alert("Query failed. Check console.");
+    }
   },
 
-  recordTuna: async function () {
-    await App.contracts.Gateway.methods
-      .recordTuna(
-        $("#upcRec").val(),
-        $("#tunaPrice").val(),
-        $("#tunaNotes").val()
-      )
-      .send({ from: App.metamaskAccountID });
-
-    alert("Tuna Recorded");
-  },
-
-  auditTuna: async function () {
-    await App.contracts.Gateway.methods
-      .auditTuna(
-        $("#upcAud").val(),
-        $("#auditStatus").val()
-      )
-      .send({ from: App.metamaskAccountID });
-
-    alert("Tuna Audited");
-  },
-
+  /* ---------- BUY ---------- */
   buyTuna: async function () {
     const price = $("#tunaPrice_Buy").val();
 
     await App.contracts.Gateway.methods
-      .buyTuna($("#upcBuy").val(), price)
+      .buyTuna($("#upcBuy").val())
       .send({
         from: App.metamaskAccountID,
         value: price
@@ -600,53 +576,24 @@ App = {
     alert("Tuna Bought");
   },
 
-  /* ---------------- QUERY ---------------- */
-
-  queryTuna: async function () {
-    const upc = $("#fishID").val();
-
-    const data = await App.contracts.Gateway.methods
-      .queryTuna(upc)
-      .call();
-
-    $("#ftc-item").html(`
-      <li>Owner: ${data[0]}</li>
-      <li>Location: ${data[1]}</li>
-      <li>Notes: ${data[2]}</li>
-      <li>Price: ${data[3]}</li>
-      <li>State: ${["Caught","Recorded","Audited","Bought"][data[4]]}</li>
-      <li>Regulator: ${data[5]}</li>
-      <li>Status: ${data[6]}</li>
-    `);
-  },
-
-  /* ---------------- ADMIN ---------------- */
-
+  /* ---------- ADMIN ---------- */
   addFisherman: async function () {
     await App.contracts.Gateway.methods
       .addFisherman($("#roleAddress").val())
       .send({ from: App.metamaskAccountID });
-
-    alert("Fisherman Added");
   },
 
   addRegulator: async function () {
     await App.contracts.Gateway.methods
       .addRegulator($("#roleAddress").val())
       .send({ from: App.metamaskAccountID });
-
-    alert("Regulator Added");
   },
 
   addRestaurant: async function () {
     await App.contracts.Gateway.methods
       .addRestaurant($("#roleAddress").val())
       .send({ from: App.metamaskAccountID });
-
-    alert("Restaurant Added");
   }
 };
 
-$(window).on("load", function () {
-  App.init();
-});
+$(window).on("load", App.init);
