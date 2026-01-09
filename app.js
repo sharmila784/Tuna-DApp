@@ -464,46 +464,65 @@ App = {
 
   /* ---------- ROLE CHECK ---------- */
   checkUserRole: async function () {
-    const acc = App.metamaskAccountID;
+  const acc = App.metamaskAccountID;
 
-    const isOwner = await App.contracts.Gateway.methods.isOwner().call();
-    const isFisherman = await App.contracts.Gateway.methods.isFisherman(acc).call();
-    const isRegulator = await App.contracts.Gateway.methods.isRegulator(acc).call();
-    const isRestaurant = await App.contracts.Gateway.methods.isRestaurant(acc).call();
+  const isOwner = await App.contracts.Gateway.methods
+    .isOwner()
+    .call({ from: acc });
 
-    App.updateUI(isOwner, isFisherman, isRegulator, isRestaurant);
-  },
+  const isFisherman = await App.contracts.Gateway.methods
+    .isFisherman(acc)
+    .call();
+
+  const isRegulator = await App.contracts.Gateway.methods
+    .isRegulator(acc)
+    .call();
+
+  const isRestaurant = await App.contracts.Gateway.methods
+    .isRestaurant(acc)
+    .call();
+
+  console.log({ acc, isOwner, isFisherman, isRegulator, isRestaurant });
+
+  App.updateUI(isOwner, isFisherman, isRegulator, isRestaurant);
+},
 
   /* ---------- UI CONTROL ---------- */
   updateUI: function (isOwner, isFisherman, isRegulator, isRestaurant) {
-    $("button").prop("disabled", true);
-    $(".btn-query").prop("disabled", false);
-    $("#currentRole").text("NOT ASSIGNED");
 
-    if (isOwner) {
-      $("#currentRole").text("ADMIN");
-      $("[data-id='7'], [data-id='8'], [data-id='9']").prop("disabled", false);
-    }
+  // Disable only role-based action buttons
+  $(".btn-Catch, .btn-Record, .btn-Audit, .btn-Buy").prop("disabled", true);
+  $("[data-id='7'], [data-id='8'], [data-id='9']").prop("disabled", true);
 
-    if (isFisherman) {
-      $("#currentRole").text("FISHERMAN");
-      $(".btn-Catch, .btn-Record").prop("disabled", false);
-    }
+  // Query is public
+  $(".btn-query").prop("disabled", false);
 
-    if (isRegulator) {
-      $("#currentRole").text("REGULATOR");
-      $(".btn-Audit").prop("disabled", false);
-    }
+  $("#currentRole").text("NOT ASSIGNED");
 
-    if (isRestaurant) {
-      $("#currentRole").text("RESTAURANT");
-      $(".btn-Buy").prop("disabled", false);
-    }
-  },
+  if (isOwner) {
+    $("#currentRole").text("ADMIN");
+    $("[data-id='7'], [data-id='8'], [data-id='9']").prop("disabled", false);
+  }
+
+  if (isFisherman) {
+    $("#currentRole").text("FISHERMAN");
+    $(".btn-Catch, .btn-Record").prop("disabled", false);
+  }
+
+  if (isRegulator) {
+    $("#currentRole").text("REGULATOR");
+    $(".btn-Audit").prop("disabled", false);
+  }
+
+  if (isRestaurant) {
+    $("#currentRole").text("RESTAURANT");
+    $(".btn-Buy").prop("disabled", false);
+  }
+},
 
   /* ---------- EVENTS ---------- */
   bindEvents: function () {
-    $(document).on("click", "button", App.handleButtonClick);
+    $(document).on("click", "button[data-id]", App.handleButtonClick);
   },
 
   handleButtonClick: function (event) {
@@ -562,25 +581,94 @@ App = {
 
   /* ---------- ADMIN ---------- */
   addFisherman: async function () {
-    await App.contracts.Gateway.methods
-      .addFisherman($("#roleAddress").val())
-      .send({ from: App.metamaskAccountID });
-  },
+  try {
+    console.log("▶ Add Fisherman button clicked");
 
-  addRegulator: async function () {
-    await App.contracts.Gateway.methods
-      .addRegulator($("#roleAddress").val())
-      .send({ from: App.metamaskAccountID });
-  },
+    const addr = $("#roleAddress").val();
+    console.log("▶ Fisherman address entered:", addr);
 
-  addRestaurant: async function () {
+    if (!web3.utils.isAddress(addr)) {
+      alert("Invalid Ethereum address");
+      return;
+    }
+
+    console.log("▶ Sending transaction from:", App.metamaskAccountID);
+
     await App.contracts.Gateway.methods
-      .addRestaurant($("#roleAddress").val())
+      .addFisherman(addr)
       .send({ from: App.metamaskAccountID });
+
+    console.log("✅ Fisherman successfully added");
+    alert("Fisherman added successfully");
+
+    App.checkUserRole();
+
+  } catch (error) {
+    console.error("❌ Add Fisherman failed:", error);
+    alert(error.message || "Add Fisherman failed");
+  }
+},
+
+addRegulator: async function () {
+  try {
+    console.log("▶ Add Regulator button clicked");
+
+    const addr = $("#roleAddress").val();
+    console.log("▶ Regulator address entered:", addr);
+
+    if (!web3.utils.isAddress(addr)) {
+      alert("Invalid Ethereum address");
+      return;
+    }
+
+    console.log("▶ Sending transaction from:", App.metamaskAccountID);
+
+    await App.contracts.Gateway.methods
+      .addRegulator(addr)
+      .send({ from: App.metamaskAccountID });
+
+    console.log("✅ Regulator successfully added");
+    alert("Regulator added successfully");
+
+    App.checkUserRole();
+
+  } catch (error) {
+    console.error("❌ Add Regulator failed:", error);
+    alert(error.message || "Add Regulator failed");
+  }
+},
+
+addRestaurant: async function () {
+  try {
+    console.log("▶ Add Restaurant button clicked");
+
+    const addr = $("#roleAddress").val();
+    console.log("▶ Restaurant address entered:", addr);
+
+    if (!web3.utils.isAddress(addr)) {
+      alert("Invalid Ethereum address");
+      return;
+    }
+
+    console.log("▶ Sending transaction from:", App.metamaskAccountID);
+
+    await App.contracts.Gateway.methods
+      .addRestaurant(addr)
+      .send({ from: App.metamaskAccountID });
+
+    console.log("✅ Restaurant successfully added");
+    alert("Restaurant added successfully");
+
+    App.checkUserRole();
+
+  } catch (error) {
+    console.error("❌ Add Restaurant failed:", error);
+    alert(error.message || "Add Restaurant failed");
   }
 };
 
 $(window).on("load", App.init);
+
 
 
 
