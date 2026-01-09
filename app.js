@@ -3,7 +3,7 @@ App = {
   contracts: {},
   metamaskAccountID: null,
 
-  contractAddress: "0x4bE880a99c947b82e1d49B320Db8C42e2baCc83D",
+  contractAddress: "0xFEc39B6E85F6a95741c063c32244db88402F88F6",
   contractABI: [
 	{
 		"constant": false,
@@ -134,41 +134,8 @@ App = {
 	},
 	{
 		"constant": false,
-		"inputs": [
-			{
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "removeFisherman",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "removeRegulator",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "removeRestaurant",
+		"inputs": [],
+		"name": "renounceFisherman",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -178,6 +145,24 @@ App = {
 		"constant": false,
 		"inputs": [],
 		"name": "renounceOwnership",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "renounceRegulator",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "renounceRestaurant",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -439,8 +424,7 @@ App = {
 		"stateMutability": "view",
 		"type": "function"
 	}
-],
-
+]
 
   /* ---------- INIT ---------- */
   init: async function () {
@@ -597,3 +581,4 @@ App = {
 };
 
 $(window).on("load", App.init);
+
