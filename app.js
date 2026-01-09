@@ -582,92 +582,93 @@ App = {
   /* ---------- ADMIN ---------- */
   addFisherman: async function () {
   try {
-    console.log("▶ Add Fisherman button clicked");
+    console.log(" Add Fisherman button clicked");
 
     const addr = $("#roleAddress").val();
-    console.log("▶ Fisherman address entered:", addr);
+    console.log(" Fisherman address entered:", addr);
 
     if (!web3.utils.isAddress(addr)) {
       alert("Invalid Ethereum address");
       return;
     }
 
-    console.log("▶ Sending transaction from:", App.metamaskAccountID);
+    console.log(" Sending transaction from:", App.metamaskAccountID);
 
     await App.contracts.Gateway.methods
       .addFisherman(addr)
       .send({ from: App.metamaskAccountID });
 
-    console.log("✅ Fisherman successfully added");
+    console.log(" Fisherman successfully added");
     alert("Fisherman added successfully");
 
     App.checkUserRole();
 
   } catch (error) {
-    console.error("❌ Add Fisherman failed:", error);
+    console.error(" Add Fisherman failed:", error);
     alert(error.message || "Add Fisherman failed");
   }
 },
 
 addRegulator: async function () {
   try {
-    console.log("▶ Add Regulator button clicked");
+    console.log(" Add Regulator button clicked");
 
     const addr = $("#roleAddress").val();
-    console.log("▶ Regulator address entered:", addr);
+    console.log(" Regulator address entered:", addr);
 
     if (!web3.utils.isAddress(addr)) {
       alert("Invalid Ethereum address");
       return;
     }
 
-    console.log("▶ Sending transaction from:", App.metamaskAccountID);
+    console.log(" Sending transaction from:", App.metamaskAccountID);
 
     await App.contracts.Gateway.methods
       .addRegulator(addr)
       .send({ from: App.metamaskAccountID });
 
-    console.log("✅ Regulator successfully added");
+    console.log(" Regulator successfully added");
     alert("Regulator added successfully");
 
     App.checkUserRole();
 
   } catch (error) {
-    console.error("❌ Add Regulator failed:", error);
+    console.error(" Add Regulator failed:", error);
     alert(error.message || "Add Regulator failed");
   }
 },
 
 addRestaurant: async function () {
   try {
-    console.log("▶ Add Restaurant button clicked");
+    console.log(" Add Restaurant button clicked");
 
     const addr = $("#roleAddress").val();
-    console.log("▶ Restaurant address entered:", addr);
+    console.log(" Restaurant address entered:", addr);
 
     if (!web3.utils.isAddress(addr)) {
       alert("Invalid Ethereum address");
       return;
     }
 
-    console.log("▶ Sending transaction from:", App.metamaskAccountID);
+    console.log(" Sending transaction from:", App.metamaskAccountID);
 
     await App.contracts.Gateway.methods
       .addRestaurant(addr)
       .send({ from: App.metamaskAccountID });
 
-    console.log("✅ Restaurant successfully added");
+    console.log(" Restaurant successfully added");
     alert("Restaurant added successfully");
 
     App.checkUserRole();
 
   } catch (error) {
-    console.error("❌ Add Restaurant failed:", error);
+    console.error(" Add Restaurant failed:", error);
     alert(error.message || "Add Restaurant failed");
   }
 };
 
 $(window).on("load", App.init);
+
 
 
 
