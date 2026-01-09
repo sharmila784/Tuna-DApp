@@ -633,24 +633,29 @@ recordTuna: async function () {
 },
 
 auditTuna: async function () {
+  const upc = $("#upcAud").val();
+  const status = $("#auditStatus").val();
+
+  console.log("Audit Tuna clicked");
+  console.log("UPC:", upc);
+  console.log("Audit Status:", status);
+
+  if (!upc || !status) {
+    alert("UPC and audit status are required");
+    return;
+  }
+
   try {
-    console.log(" Audit Tuna clicked");
-
-    const upc = $("#upcAudit").val();
-    const status = $("#auditStatus").val();
-
     await App.contracts.Gateway.methods
       .auditTuna(upc, status)
       .send({ from: App.metamaskAccountID });
 
-    alert("Tuna audited successfully");
-
+    alert("Tuna successfully audited");
   } catch (err) {
-    console.error(" Audit Tuna failed:", err);
-    alert(err.message || "Audit Tuna failed");
+    console.error("Audit Tuna failed:", err);
+    alert("Audit Tuna transaction failed. Check console.");
   }
 },
-
 
   /* ---------- ADMIN ---------- */
   addFisherman: async function () {
@@ -743,6 +748,7 @@ addRestaurant: async function () {
 };
 
 $(window).on("load", App.init);
+
 
 
 
