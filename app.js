@@ -3,7 +3,7 @@ App = {
   contracts: {},
   metamaskAccountID: null,
 
-  contractAddress: "0x8Eee53787CaC56C1293b5E33D643aC2070fbc052",
+  contractAddress: "0x82079220958e4E32Fc903AB022971F9C67caf133",
   contractABI: [
 	{
 		"constant": false,
@@ -581,6 +581,7 @@ App = {
 };
 
 $(window).on("load", App.init);
+
 
 
 
