@@ -664,9 +664,11 @@ addRestaurant: async function () {
     console.error(" Add Restaurant failed:", error);
     alert(error.message || "Add Restaurant failed");
   }
+}
 };
 
 $(window).on("load", App.init);
+
 
 
 
