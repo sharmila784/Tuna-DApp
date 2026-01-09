@@ -578,34 +578,33 @@ App = {
     alert("Tuna Bought");
   },
   
-	catchTuna: async function () {
+catchTuna: async function () {
+  const upc = $("#upc").val();
+  const fisherman = App.metamaskAccountID;
+  const location = $("#originCoastLocation").val();
+
+  console.log("Catch Tuna clicked");
+  console.log("UPC:", upc);
+  console.log("Fisherman:", fisherman);
+  console.log("Location:", location);
+
+  if (!upc || !location) {
+    alert("UPC and location are required");
+    return;
+  }
+
   try {
-    console.log(" Catch Tuna clicked");
-
-    const upc = $("#upc").val();
-    const location = $("#location").val(); // MUST EXIST
-    const fisherman = App.metamaskAccountID; // sender
-
-    console.log(" UPC:", upc);
-    console.log(" Fisherman:", fisherman);
-    console.log(" Location:", location);
-
-    if (!upc || !location) {
-      alert("UPC and Location are required");
-      return;
-    }
-
     await App.contracts.Gateway.methods
       .catchTuna(upc, fisherman, location)
-      .send({ from: App.metamaskAccountID });
+      .send({ from: fisherman });
 
-    alert("Tuna caught successfully");
-
+    alert("Tuna successfully caught");
   } catch (err) {
     console.error("Catch Tuna failed:", err);
-    alert(err.message || "Catch Tuna failed");
+    alert("Catch Tuna transaction failed. Check console.");
   }
 },
+
 
 	recordTuna: async function () {
   try {
@@ -737,6 +736,7 @@ addRestaurant: async function () {
 };
 
 $(window).on("load", App.init);
+
 
 
 
