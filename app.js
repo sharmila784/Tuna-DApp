@@ -3,7 +3,7 @@ App = {
   contracts: {},
   metamaskAccountID: null,
 
-  contractAddress: "0xC5B1A19054b426efCeB07565f1BFf76bC4f22610",
+  contractAddress: "0x9889C0037421d73104b9905Fa7979Da6B9C879B4",
   contractABI: [
 	{
 		"constant": false,
@@ -421,6 +421,10 @@ App = {
 		"name": "queryTuna",
 		"outputs": [
 			{
+				"name": "exists",
+				"type": "bool"
+			},
+			{
 				"name": "ownerID",
 				"type": "address"
 			},
@@ -592,28 +596,42 @@ App = {
   },
 
   /* ---------- QUERY ---------- */
-  queryTuna: async function () {
-    try {
-      const upc = $("#fishID").val();
+queryTuna: async function () {
+  try {
+    const upc = $("#fishID").val();
 
-      const data = await App.contracts.Gateway.methods
-        .queryTuna(upc)
-        .call();
-
-      $("#ftc-item").html(`
-        <li>Owner: ${data[0]}</li>
-        <li>Location: ${data[1]}</li>
-        <li>Notes: ${data[2]}</li>
-        <li>Price: ${data[3]}</li>
-        <li>State: ${["Caught","Recorded","Audited","Bought"][data[4]]}</li>
-        <li>Regulator: ${data[5]}</li>
-        <li>Status: ${data[6]}</li>
-      `);
-    } catch (err) {
-      console.error(err);
-      alert("Query failed. Check console.");
+    if (!upc) {
+      alert("Please enter a UPC");
+      return;
     }
-  },
+
+    const data = await App.contracts.Gateway.methods
+      .queryTuna(upc)
+      .call();
+
+    // data[0] = exists
+    if (!data[0]) {
+      $("#ftc-item").html("<li>❌ Tuna with this UPC does not exist</li>");
+      return;
+    }
+
+    $("#ftc-item").html(`
+      <li><b>Owner:</b> ${data[1]}</li>
+      <li><b>Fisherman:</b> ${data[2]}</li>
+      <li><b>Location:</b> ${data[3]}</li>
+      <li><b>Notes:</b> ${data[4]}</li>
+      <li><b>Price:</b> ${data[5]}</li>
+      <li><b>State:</b> ${["Caught","Recorded","Audited","Bought"][data[6]]}</li>
+      <li><b>Regulator:</b> ${data[7]}</li>
+      <li><b>Audit Status:</b> ${data[8]}</li>
+      <li><b>Restaurant:</b> ${data[9]}</li>
+    `);
+
+  } catch (err) {
+    console.error("Query failed:", err);
+    alert("Query failed. Check console.");
+  }
+},
 
   /* ---------- BUY ---------- */
   buyTuna: async function () {
@@ -799,6 +817,7 @@ addRestaurant: async function () {
 };
 
 $(window).on("load", App.init);
+
 
 
 
