@@ -3,7 +3,7 @@ App = {
   contracts: {},
   metamaskAccountID: null,
 
-  contractAddress: "0x6ad420D0d2038243590013fa20F40893dB65719B",
+  contractAddress: "0xC5B1A19054b426efCeB07565f1BFf76bC4f22610",
   contractABI: [
 	{
 		"constant": false,
@@ -412,6 +412,57 @@ App = {
 	},
 	{
 		"constant": true,
+		"inputs": [
+			{
+				"name": "_upc",
+				"type": "uint256"
+			}
+		],
+		"name": "queryTuna",
+		"outputs": [
+			{
+				"name": "ownerID",
+				"type": "address"
+			},
+			{
+				"name": "originFishermanID",
+				"type": "address"
+			},
+			{
+				"name": "originCoastLocation",
+				"type": "string"
+			},
+			{
+				"name": "tunaNotes",
+				"type": "string"
+			},
+			{
+				"name": "tunaPrice",
+				"type": "uint256"
+			},
+			{
+				"name": "tunaState",
+				"type": "uint8"
+			},
+			{
+				"name": "regulatorID",
+				"type": "address"
+			},
+			{
+				"name": "auditStatus",
+				"type": "string"
+			},
+			{
+				"name": "restaurantID",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
 		"inputs": [],
 		"name": "upc",
 		"outputs": [
@@ -748,6 +799,7 @@ addRestaurant: async function () {
 };
 
 $(window).on("load", App.init);
+
 
 
 
